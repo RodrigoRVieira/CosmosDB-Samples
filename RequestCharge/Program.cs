@@ -94,7 +94,7 @@
             await QueryWithDoubleJoin(collectionUri);
 
             // Uncomment to Cleanup
-            // await client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(databaseId));
+            await client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(databaseId));
         }
 
         private static async Task QueryWithOneFilter(Uri collectionUri)
