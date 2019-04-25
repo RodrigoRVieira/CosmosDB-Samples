@@ -100,7 +100,7 @@ namespace PartitioningConsole
         {
             for (short i = 0; i < 500; i++)
             {
-                Person pessoa = new Person
+                Person person = new Person
                 {
                     Name = $"{nameGenerator.FirstName()} {nameGenerator.LastName()}",
                     Address = new Address
@@ -110,7 +110,7 @@ namespace PartitioningConsole
                     }
                 };
 
-                await client.UpsertDocumentAsync(collectionUri, pessoa);
+                await client.UpsertDocumentAsync(collectionUri, person);
 
                 await Task.Delay(50);
             }

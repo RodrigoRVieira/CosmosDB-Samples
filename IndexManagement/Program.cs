@@ -84,9 +84,6 @@
             // Init
             var database = await client.CreateDatabaseIfNotExistsAsync(new Database { Id = databaseId });
 
-
-            
-
             // 1. Exclude a document from the index
             await ExplicitlyExcludeFromIndex();
 

@@ -1,6 +1,6 @@
 ﻿namespace CosmosDB.Samples.Queries
 {
-    using Shared.Util;
+    using DocumentDB.Samples.Shared.Util;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
@@ -43,7 +43,7 @@
             try
             {
                 //Get a Document client
-                using (client = new DocumentClient(new Uri(endpointUrl), authorizationKey, 
+                using (client = new DocumentClient(new Uri(endpointUrl), authorizationKey,
                     new ConnectionPolicy { ConnectionMode = ConnectionMode.Gateway, ConnectionProtocol = Protocol.Https }))
                 {
                     RunDemoAsync(DatabaseName, CollectionName).Wait();
@@ -93,8 +93,7 @@
             // Query with a double join
             await QueryWithDoubleJoin(collectionUri);
 
-            // Uncomment to Cleanup
-            await client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(databaseId));
+            await client.DeleteDocumentCollectionAsync(collectionUri);
         }
 
         private static async Task QueryWithOneFilter(Uri collectionUri)
@@ -104,7 +103,7 @@
             Console.WriteLine();
 
             // Query using a single filter on id
-            IDocumentQuery <dynamic> equalityQuery = client.CreateDocumentQuery(collectionUri,
+            IDocumentQuery<dynamic> equalityQuery = client.CreateDocumentQuery(collectionUri,
                 "SELECT * FROM Families f WHERE f.id = 'AndersenFamily'", DefaultOptions).AsDocumentQuery();
 
             // Asynchronous call to perform the query
@@ -116,17 +115,13 @@
                 Console.WriteLine(item);
             }
 
-            // Display request charge from asynchronous response
-            Console.WriteLine("Request Charge: {0}", result.RequestCharge);
-            Console.WriteLine("Press enter key to continue********************************************");
-            Console.ReadKey();
-            Console.WriteLine();
+            Log.LogAndWait("QueryWithOneFilter - Request Charge: ", result.RequestCharge);
         }
 
         private static async Task QueryWithTwoFilters(Uri collectionUri)
         {
             Console.WriteLine("Filter on two properties. Find families where id is 'AndersenFamily' OR city is 'NY'");
-            Console.WriteLine("SELECT f.LastName AS Name, f.Address.City AS City \n" + 
+            Console.WriteLine("SELECT f.LastName AS Name, f.Address.City AS City \n" +
                 "\t FROM Families f \n " +
                 "\t WHERE f.id = 'AndersenFamily' OR f.Address.City = 'NY'");
             Console.WriteLine();
@@ -146,11 +141,7 @@
                 Console.WriteLine(item);
             }
 
-            // Display request charge from asynchronous response
-            Console.WriteLine("Request Charge: {0}", result.RequestCharge);
-            Console.WriteLine("Press enter key to continue********************************************");
-            Console.ReadKey();
-            Console.WriteLine("");
+            Log.LogAndWait("QueryWithTwoFilters - Request Charge: ", result.RequestCharge);
         }
 
         private static async Task QueryWithRangeOperatorsDateTimes(Uri collectionUri)
@@ -173,11 +164,7 @@
                 Console.WriteLine("The {0} family registered within the last 3 days", item.LastName);
             }
 
-            // Display request charge from asynchronous response
-            Console.WriteLine("Request Charge: {0}", result.RequestCharge);
-            Console.WriteLine("Press enter key to continue********************************************");
-            Console.ReadKey();
-            Console.WriteLine();
+            Log.LogAndWait("QueryWithRangeOperatorsDateTimes - Request Charge: ", result.RequestCharge);
         }
 
         private static async Task QueryWithSingleJoin(Uri collectionUri)
@@ -203,11 +190,7 @@
                 Console.WriteLine(JsonConvert.SerializeObject(item));
             }
 
-            // Display request charge from asynchronous response
-            Console.WriteLine("Request Charge: {0}", result.RequestCharge);
-            Console.WriteLine("Press enter key to continue********************************************");
-            Console.ReadKey();
-            Console.WriteLine("");
+            Log.LogAndWait("QueryWithSingleJoin - Request Charge: ", result.RequestCharge);
         }
 
         private static async Task QueryWithDoubleJoin(Uri collectionUri)
@@ -234,8 +217,7 @@
                 Console.WriteLine(JsonConvert.SerializeObject(item));
             }
 
-            // Display request charge from asynchronous response
-            Console.WriteLine("Request Charge: {0}", result.RequestCharge);
+            Log.LogAndWait("QueryWithDoubleJoin - Request Charge: ", result.RequestCharge);
         }
 
         /// <summary>
@@ -249,30 +231,32 @@
             {
                 Id = "AndersenFamily",
                 LastName = "Andersen",
-                Parents = new Parent[] 
+                Parents = new Parent[]
                 {
                     new Parent { FirstName = "Thomas" },
                     new Parent { FirstName = "Mary Kay"}
                 },
-                Children = new Child[] 
+                Children = new Child[]
                 {
                     new Child
-                    { 
-                        FirstName = "Henriette Thaulow", 
-                        Gender = "female", 
-                        Grade = 5, 
-                        Pets = new [] 
+                    {
+                        FirstName = "Henriette Thaulow",
+                        Gender = "female",
+                        Grade = 5,
+                        Pets = new []
                         {
-                            new Pet { GivenName = "Fluffy" } 
+                            new Pet { GivenName = "Fluffy" }
                         }
-                    } 
+                    }
                 },
                 Address = new Address { State = "WA", County = "King", City = "Seattle" },
                 IsRegistered = true,
                 RegistrationDate = DateTime.UtcNow.AddDays(-1)
             };
 
-            await client.UpsertDocumentAsync(collectionUri, AndersonFamily);
+            ResourceResponse<Document> result = await client.UpsertDocumentAsync(collectionUri, AndersonFamily);
+
+            Log.LogAndWait("CreateDocument - Request Charge: ", result.RequestCharge);
 
             Family WakefieldFamily = new Family
             {
@@ -285,9 +269,9 @@
                 Children = new Child[] {
                     new Child
                     {
-                        FamilyName= "Merriam", 
-                        FirstName= "Jesse", 
-                        Gender= "female", 
+                        FamilyName= "Merriam",
+                        FirstName= "Jesse",
+                        Gender= "female",
                         Grade= 8,
                         Pets= new Pet[] {
                             new Pet { GivenName= "Goofy" },
@@ -296,8 +280,8 @@
                     },
                     new Child
                     {
-                        FirstName= "Lisa", 
-                        Gender= "female", 
+                        FirstName= "Lisa",
+                        Gender= "female",
                         Grade= 1
                     }
                 },
@@ -306,7 +290,9 @@
                 RegistrationDate = DateTime.UtcNow.AddDays(-30)
             };
 
-            await client.UpsertDocumentAsync(collectionUri, WakefieldFamily);
+            result = await client.UpsertDocumentAsync(collectionUri, WakefieldFamily);
+
+            Log.LogAndWait("CreateDocument - Request Charge: ", result.RequestCharge);
         }
 
         /// <summary>
@@ -409,7 +395,7 @@
 
             public bool IsRegistered { get; set; }
 
-            public DateTime RegistrationDate { get; set;  }
+            public DateTime RegistrationDate { get; set; }
         }
     }
 }

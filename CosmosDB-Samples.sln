@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Index", "Index", "{E47D1EE9-1EFD-4732-81E2-7E3E4A7E63B3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Index", "3. Index", "{E47D1EE9-1EFD-4732-81E2-7E3E4A7E63B3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApp", "WebApp", "{E7E5C006-28FF-4DD6-8809-0F30F6CA9C3F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5. WebApp", "5. WebApp", "{E7E5C006-28FF-4DD6-8809-0F30F6CA9C3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{16C11979-9B7C-4F35-BCD1-CAC434D79467}"
 EndProject
@@ -17,11 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosDB.Repository", "WebA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexManagement", "IndexManagement\IndexManagement.csproj", "{35C7BBEB-B390-42F2-A301-15CE198CE79B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RequestUnit", "RequestUnit", "{9022DE2B-1797-4361-968C-D9E9582D319E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. RequestUnit", "1. RequestUnit", "{9022DE2B-1797-4361-968C-D9E9582D319E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestCharge", "RequestCharge\RequestCharge.csproj", "{6B5021ED-8B3A-4E38-92DB-612C4ECDC580}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Partitioning", "Partitioning", "{8F58146D-03A5-4EF9-83AA-7D23F5420E1B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Partitioning", "2. Partitioning", "{8F58146D-03A5-4EF9-83AA-7D23F5420E1B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ADAC8241-6826-48C1-B94A-9D9D19CCAABE}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,6 +29,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartitioningConsole", "PartitioningConsole\PartitioningConsole.csproj", "{54FFC100-4EFB-4EB9-9CD3-59E7D1094F90}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. TTL", "4. TTL", "{FD85FB4F-D5B7-4E08-A857-FF42F77FFF6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTLConsole", "TTLConsole\TTLConsole.csproj", "{05E7ADD9-AA43-4AEB-850F-411882E78B75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +68,10 @@ Global
 		{54FFC100-4EFB-4EB9-9CD3-59E7D1094F90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54FFC100-4EFB-4EB9-9CD3-59E7D1094F90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54FFC100-4EFB-4EB9-9CD3-59E7D1094F90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05E7ADD9-AA43-4AEB-850F-411882E78B75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05E7ADD9-AA43-4AEB-850F-411882E78B75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05E7ADD9-AA43-4AEB-850F-411882E78B75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05E7ADD9-AA43-4AEB-850F-411882E78B75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +83,7 @@ Global
 		{35C7BBEB-B390-42F2-A301-15CE198CE79B} = {E47D1EE9-1EFD-4732-81E2-7E3E4A7E63B3}
 		{6B5021ED-8B3A-4E38-92DB-612C4ECDC580} = {9022DE2B-1797-4361-968C-D9E9582D319E}
 		{54FFC100-4EFB-4EB9-9CD3-59E7D1094F90} = {8F58146D-03A5-4EF9-83AA-7D23F5420E1B}
+		{05E7ADD9-AA43-4AEB-850F-411882E78B75} = {FD85FB4F-D5B7-4E08-A857-FF42F77FFF6A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BAC19307-8904-4054-8409-76E9A61C4D19}
