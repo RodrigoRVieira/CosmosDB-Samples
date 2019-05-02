@@ -55,9 +55,23 @@ namespace TriggerConsole
 
             await CreatePostTrigger();
 
+            await CreateMetadata();
+
             await CreateItem();
 
             await client.DeleteDocumentCollectionAsync(collectionUri);
+        }
+
+        private static async Task CreateMetadata()
+        {
+            dynamic newItem = new
+            {
+                createdItems = 0,
+                createdNames = ""
+            };
+
+            Uri containerUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, CollectionName);
+            await client.CreateDocumentAsync(containerUri, newItem);
         }
 
         private static async Task CreateItem()
