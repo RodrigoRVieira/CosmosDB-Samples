@@ -55,7 +55,7 @@ namespace StoredProcedureConsole
 
             await CreateItem();
 
-            await client.DeleteDocumentCollectionAsync(collectionUri);
+            // await client.DeleteDocumentCollectionAsync(collectionUri);
         }
 
         private static async Task CreateItem()

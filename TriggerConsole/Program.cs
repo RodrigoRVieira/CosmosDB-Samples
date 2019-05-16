@@ -59,19 +59,21 @@ namespace TriggerConsole
 
             await CreateItem();
 
-            await client.DeleteDocumentCollectionAsync(collectionUri);
+            // await client.DeleteDocumentCollectionAsync(collectionUri);
         }
 
         private static async Task CreateMetadata()
         {
-            dynamic newItem = new
+            dynamic metadata = new
             {
+                id = "_metadata",
                 createdItems = 0,
-                createdNames = ""
+                createdNames = "",
+                category = "Personal"
             };
 
             Uri containerUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, CollectionName);
-            await client.CreateDocumentAsync(containerUri, newItem);
+            await client.CreateDocumentAsync(containerUri, metadata);
         }
 
         private static async Task CreateItem()
@@ -85,7 +87,12 @@ namespace TriggerConsole
             };
 
             Uri containerUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, CollectionName);
-            RequestOptions requestOptions = new RequestOptions { PreTriggerInclude = new List<string> { "trgPreValidateToDoItemTimestamp" } };
+            RequestOptions requestOptions = new RequestOptions
+            {
+                PreTriggerInclude = new List<string> { "trgPreValidateToDoItemTimestamp" },
+                PostTriggerInclude = new List<string> { "trgPostUpdateMetadata" }
+            };
+
             await client.CreateDocumentAsync(containerUri, newItem, requestOptions);
         }
 
@@ -122,7 +129,7 @@ namespace TriggerConsole
             DocumentCollection collectionDefinition = new DocumentCollection();
             collectionDefinition.Id = collectionId;
             collectionDefinition.IndexingPolicy = new IndexingPolicy(new RangeIndex(DataType.String) { Precision = -1 });
-            collectionDefinition.PartitionKey.Paths.Add("/Category");
+            collectionDefinition.PartitionKey.Paths.Add("/category");
             collectionDefinition.DefaultTimeToLive = -1;
 
             return await client.CreateDocumentCollectionIfNotExistsAsync(

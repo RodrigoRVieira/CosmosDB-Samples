@@ -20,7 +20,7 @@
 
         // update metadata
         metadataItem.createdItems += 1;
-        metadataItem.createdNames += " " + createdItem.id;
+        metadataItem.createdNames += " " + createdItem.name;
         var accept = container.replaceDocument(metadataItem._self,
             metadataItem, function (err, itemReplaced) {
                 if (err) throw "Unable to update metadata, abort";
@@ -28,3 +28,4 @@
         if (!accept) throw "Unable to update metadata, abort";
         return;
     }
+}

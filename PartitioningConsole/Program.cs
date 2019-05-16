@@ -17,7 +17,6 @@ namespace PartitioningConsole
         private static DocumentClient client;
 
         private static readonly string DatabaseName = "samples";
-        private static readonly string CollectionName = "partitioning-samples";
         private static readonly string CollectionNameSuffix = "partitioning-samples-suffix";
 
         private static readonly string endpointUrl = ConfigurationManager.AppSettings["EndPointUrl"];
@@ -35,11 +34,9 @@ namespace PartitioningConsole
                 using (client = new DocumentClient(new Uri(endpointUrl), authorizationKey,
                     new ConnectionPolicy { ConnectionMode = ConnectionMode.Gateway, ConnectionProtocol = Protocol.Https }))
                 {
-                    Uri collectionUri = RunDemoAsync(DatabaseName, CollectionName, false).Result;
-
                     Uri collectionUriSuffix = RunDemoAsync(DatabaseName, CollectionNameSuffix, true).Result;
 
-                    RetrieveDocumentsWithPartitionKey(collectionUri).Wait();
+                    RetrieveDocumentsWithPartitionKey(collectionUriSuffix).Wait();
 
                     RetrieveDocumentsWithoutPartitionKey(collectionUriSuffix).Wait();
                 }
@@ -81,32 +78,35 @@ namespace PartitioningConsole
             return await client.CreateDocumentCollectionIfNotExistsAsync(
                 UriFactory.CreateDatabaseUri(databaseId),
                 collectionDefinition,
-                new RequestOptions { OfferThroughput = 400 });
+                new RequestOptions { OfferThroughput = 7500 });
         }
 
         private static async Task CreateDocuments(Uri collectionUri, bool addSuffix)
         {
             var taskCollection = new List<Task>();
 
-            for (var i = 0; i < 100; i++)
+            for (short i = 0; i < 100; i++)
             {
-                taskCollection.Add(AddPerson(collectionUri, addSuffix));
+                taskCollection.Add(AddPerson(collectionUri, addSuffix, i));
             }
 
             await Task.WhenAll(taskCollection);
         }
 
-        private static async Task AddPerson(Uri collectionUri, bool addSuffix)
+        private static async Task AddPerson(Uri collectionUri, bool addSuffix, short taskId)
         {
-            for (short i = 0; i < 500; i++)
+            for (int i = 0; i < 50000; i++)
             {
+                if (i % 500 == 0)
+                    Console.WriteLine($"{DateTime.Now.ToLongTimeString()} - {taskId} - {i}");
+
                 Person person = new Person
                 {
                     Name = $"{nameGenerator.FirstName()} {nameGenerator.LastName()}",
                     Address = new Address
                     {
                         City = addressGenerator.City(),
-                        State = $"{addressGenerator.State()}{(addSuffix ? "-" + faker.Random.Number(1, 999) : "")}"
+                        State = $"{addressGenerator.State()}{(addSuffix ? "-" + faker.Random.Number(1, 2) : "")}"
                     }
                 };
 
@@ -119,7 +119,7 @@ namespace PartitioningConsole
         private static async Task RetrieveDocumentsWithPartitionKey(Uri collectionUri)
         {
             IDocumentQuery<dynamic> q = client.CreateDocumentQuery(collectionUri,
-                "SELECT * FROM c WHERE c.Address.State = 'Minas Gerais'",
+                "SELECT * FROM c WHERE c.Address.State = 'Minas Gerais-1'",
                 new FeedOptions
                 {
                     EnableCrossPartitionQuery = false,

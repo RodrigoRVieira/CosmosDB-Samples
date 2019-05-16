@@ -63,7 +63,7 @@ namespace TTLConsole
             }
             while (resultCount > 1);
 
-            await client.DeleteDocumentCollectionAsync(collectionUri);
+            // await client.DeleteDocumentCollectionAsync(collectionUri);
         }
 
         private static async Task CreateDocuments(Uri collectionUri)
