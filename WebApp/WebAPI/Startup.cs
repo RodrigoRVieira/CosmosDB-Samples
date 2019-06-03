@@ -34,19 +34,6 @@ namespace CosmosDB.WebAPI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            #region CORS
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                builder => builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
-            });
-
-            #endregion
-
             #region Compression
 
             services.Configure<GzipCompressionProviderOptions>(
@@ -128,8 +115,6 @@ namespace CosmosDB.WebAPI
             });
 
             #endregion
-
-            app.UseCors("CorsPolicy");
 
             app.UseMvc();
         }
