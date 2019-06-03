@@ -54,6 +54,21 @@ namespace CosmosDB.Repository
             _collectionId = configurationSection.GetSection("CollectionId").Value;
 
             _maxItemCount = int.Parse(configurationSection.GetSection("MaxItemCount").Value);
+
+            #region Database/Container Initialization
+
+            _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseId }).Wait();
+
+            DocumentCollection collectionDefinition = new DocumentCollection();
+            collectionDefinition.Id = _collectionId;
+            collectionDefinition.PartitionKey.Paths.Add("/Type");
+
+            _client.CreateDocumentCollectionIfNotExistsAsync(
+                UriFactory.CreateDatabaseUri(_databaseId),
+                collectionDefinition,
+                new RequestOptions { OfferThroughput = 400 }).Wait();
+
+            #endregion
         }
 
         /// <summary>
