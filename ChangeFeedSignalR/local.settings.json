@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "Storage Account ConnString",
+    "AzureSignalRConnectionString": "SignalR ConnString",
+    "AzureWebJobsCosmosDBConnectionString": "CosmosDB Account Endpoint",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*"
+  }
+}

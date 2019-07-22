@@ -19,4 +19,6 @@ appSettings.config
 
 [Cosmos DB Explorer](https://github.com/sachabruttin/CosmosDbExplorer)
 
+[Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/)
+
 [Cosmos DB Performance Tips](https://docs.microsoft.com/en-us/azure/cosmos-db/performance-tips)

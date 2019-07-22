@@ -99,14 +99,8 @@
             Console.WriteLine("Press enter key to continue********************************************");
             Console.ReadKey();
 
-            // 4. Exclude specified document paths from the index
-            await ExcludePathsFromIndex();
-
-            Console.WriteLine("Press enter key to continue********************************************");
-            Console.ReadKey();
-
             // Uncomment to Cleanup
-            await client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(databaseId));
+            // await client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(databaseId));
         }
 
         /// <summary>
@@ -156,7 +150,7 @@
             Console.WriteLine("Document found by query: {0}", found);
             Console.ReadKey();
 
-            Console.WriteLine("However, if we search for it based on the document ID, we will be able to find it.");
+            Console.WriteLine("However, if we search for it based on the document Self-Link, we will be able to find it.");
             Document document = await client.ReadDocumentAsync(created.SelfLink);
             Console.WriteLine("Document read by id: {0}", document!=null);
             
@@ -182,7 +176,7 @@
             collectionSpec.IndexingPolicy.Automatic = false;
 
             var collection = await DocumentClientHelper.CreateDocumentCollectionWithRetriesAsync(client, databaseId, collectionSpec);
-            Console.WriteLine("Collection {0} created with index policy \n{1}", collection.Id, collection.IndexingPolicy);
+            Console.WriteLine("Collection {0} created with index policy \n{1}", collection.Id, collectionSpec.IndexingPolicy);
 
             // Create a dynamic document, with just a single property for simplicity, 
             // then query for document using that property and we should find nothing
@@ -239,88 +233,6 @@
             //which would give the index time to catch-up.
 
             await client.DeleteDocumentCollectionAsync(collectionUri);
-        }
-
-        /// <summary>
-        /// The default behavior is for CosmosDB to index every attribute in every document automatically.
-        /// There are times when a document contains large amounts of information, in deeply nested structures
-        /// that you know you will never search on. In extreme cases like this, you can exclude paths from the 
-        /// index to save on storage cost, improve write performance and also improve read performance because the index is smaller
-        ///
-        /// This method demonstrates how to set IndexingPolicy.ExcludedPaths
-        /// </summary>
-        private static async Task ExcludePathsFromIndex()
-        {
-            var collectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionId);
-
-            Console.WriteLine("\n4. Exclude specified paths from document index");
-
-            dynamic dyn = new
-            {
-                id = "doc1",
-                foo = "bar",
-                metaData = "meta",
-                subDoc = new { searchable = "searchable", nonSearchable = "value"  },
-                excludedNode = new { subExcluded = "something", subExcludedNode = new { someProperty = "value" } }
-            };
-
-            var collDefinition = new DocumentCollection { Id = collectionId };
-                      
-            collDefinition.IndexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });  // Special manadatory path of "/*" required to denote include entire tree
-            collDefinition.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath { Path = "/metaData/*" });   // exclude metaData node, and anything under it
-            collDefinition.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath { Path = "/subDoc/nonSearchable/*" });  // exclude ONLY a part of subDoc    
-            collDefinition.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath { Path = "/\"excludedNode\"/*" }); // exclude excludedNode node, and anything under it
-            
-            // The effect of the above IndexingPolicy is that only id, foo, and the subDoc/searchable are indexed
-
-            var collection = await DocumentClientHelper.CreateDocumentCollectionWithRetriesAsync(client, databaseId, collDefinition);
-            Console.WriteLine("Collection {0} created with index policy \n{1}", collection.Id, collection.IndexingPolicy);
-
-            Document created = await client.CreateDocumentAsync(collection.SelfLink, dyn);
-            Console.WriteLine("\nDocument created: \n{0}", created);
-
-            // Querying for a document on either metaData or /subDoc/subSubDoc/someProperty > fail because they were excluded
-            var found = ShowQueryIsNotAllowed(collection, "SELECT * FROM root r WHERE r.metaData='meta'");
-            Console.WriteLine("Query on metaData returned results? {0}", found);
-
-            found = ShowQueryIsNotAllowed(collection, "SELECT * FROM root r WHERE r.subDoc.nonSearchable='value'");
-            Console.WriteLine("Query on /subDoc/nonSearchable/ returned results? {0}", found);
-
-            found = ShowQueryIsNotAllowed(collection, "SELECT * FROM root r WHERE r.excludedNode.subExcludedNode.someProperty='value'");
-            Console.WriteLine("Query on /excludedNode/subExcludedNode/someProperty/ returned results? {0}", found);
-
-            // Querying for a document using food, or even subDoc/searchable > succeed because they were not excluded
-            found = ShowQueryIsAllowed(collection, "SELECT * FROM root r WHERE r.foo='bar'");
-            Console.WriteLine("Query on foo returned results? {0}", found);
-
-            found = ShowQueryIsAllowed(collection, "SELECT * FROM root r WHERE r.subDoc.searchable='searchable'");
-            Console.WriteLine("Query on /subDoc/searchable/ returned results? {0}", found);
-
-            //Cleanup
-            await client.DeleteDocumentCollectionAsync(collectionUri);
-        }
-
-        private static bool ShowQueryIsAllowed(DocumentCollection collection, string query, FeedOptions options = null)
-        {
-            return client.CreateDocumentQuery(collection.SelfLink, query, options).AsEnumerable().Any();
-        }
-
-        private static bool ShowQueryIsNotAllowed(DocumentCollection collection, string query, FeedOptions options = null)
-        {
-            try
-            {
-                return client.CreateDocumentQuery(collection.SelfLink, query, options).AsEnumerable().Any();
-            }
-            catch (Exception e)
-            {
-                var baseEx = (DocumentClientException)e.GetBaseException();
-                if (baseEx.StatusCode != HttpStatusCode.BadRequest)
-                {
-                    throw;
-                }
-            }
-
-            return false;
         }
 
         /// <summary>

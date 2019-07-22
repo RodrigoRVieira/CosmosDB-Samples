@@ -31,7 +31,7 @@ namespace PartitioningConsole
         {
             try
             {
-                using (client = new DocumentClient(new Uri(endpointUrl), authorizationKey,
+                using (client = new Microsoft.Azure.Documents.Client.DocumentClient(new Uri(endpointUrl), authorizationKey,
                     new ConnectionPolicy { ConnectionMode = ConnectionMode.Gateway, ConnectionProtocol = Protocol.Https }))
                 {
                     Uri collectionUriSuffix = RunDemoAsync(DatabaseName, CollectionNameSuffix, true).Result;

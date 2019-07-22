@@ -25,8 +25,17 @@ namespace TTLConsole
         {
             try
             {
+                var connectionPolicy = new ConnectionPolicy
+                {
+                    ConnectionMode = ConnectionMode.Gateway,
+                    ConnectionProtocol = Protocol.Https,
+
+                };
+
+                connectionPolicy.PreferredLocations.Add(LocationNames.BrazilSouth);
+
                 using (client = new DocumentClient(new Uri(endpointUrl), authorizationKey,
-                    new ConnectionPolicy { ConnectionMode = ConnectionMode.Gateway, ConnectionProtocol = Protocol.Https }))
+                    connectionPolicy))
                 {
                     RunDemoAsync(DatabaseName, CollectionName).Wait();
                 }
